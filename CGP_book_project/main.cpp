@@ -117,10 +117,23 @@ void init(GLFWwindow* window) {
 	glBindVertexArray(vao[0]);
 }
 
+float x = 0.0f;
+float inc = 0.01f;
+
 void display(GLFWwindow* window, double currentTime) {
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT); // clear the bakcground to black, each time
+
 	glUseProgram(renderingProgram);
-	glPointSize(50.0f);
-	glDrawArrays(GL_POINTS, 0, 1);
+
+	x += inc; // move the triangle along x axis
+	if (x > 1.0f) inc = -0.01f; // switch to moving the triangle to the left
+	if (x < -1.0f) inc = 0.01f; // switch to moving the triangle to the right
+	GLuint offsetLoc = glGetUniformLocation(renderingProgram, "offset"); // get ptr to "offset"
+	glProgramUniform1f(renderingProgram, offsetLoc, x); // send value in "x" to "offset"
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 int main(void) {
